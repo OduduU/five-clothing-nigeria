@@ -1,9 +1,11 @@
 import { combineReducers, createStore, applyMiddleware } from "redux";
 import logger from "redux-logger";
 import user from "./user/user.reducer";
+import cart from "./cart/cart.reducer"
 
 const rootReducer = combineReducers({
-	user
+	user,
+	cart
 });
 
 const middlewares = [logger];

@@ -5,8 +5,10 @@ import { ReactComponent as Logo } from "../../assets/4.3 crown.svg.svg";
 
 import "./header.styles.scss";
 import { auth } from "../../firebase/firebase.utils";
+import CartIcon from '../cart-icon/cart-icon.compnent';
+import CartDropdown from '..//cart-dropdown/cart-dropdown.component';
 
-const Header = ({ currentUser }) => {
+const Header = ({ currentUser, hidden }) => {
 	return (
 		<div className="header">
 			<Link className="logo-container" to="/">
@@ -29,14 +31,17 @@ const Header = ({ currentUser }) => {
 						SIGN IN
 					</Link>
 				)}
+				<CartIcon />
 			</div>
+			{hidden ? <CartDropdown /> : null}		
 		</div>
 	);
 };
 
-function mapStateToProps(state) {
+function mapStateToProps({user: {currentUser}, cart: {hidden}}) {
 	return {
-		currentUser: state.user.currentUser
+		currentUser,
+		hidden
 	};
 }
 
