@@ -1,36 +1,41 @@
 import React from "react";
 import { Route } from "react-router-dom";
+// import { createStructuredSelector } from 'reselect'
 import { connect } from "react-redux";
 
-import WithSpinner from "../../components/with-spinner/with-spinner.component";
+// import WithSpinner from "../../components/with-spinner/with-spinner.component";
 
-import CollectionsOverview from "../../components/collections-overview/collections-overview.component";
-import CollectionPage from "../collection/collection.component";
+// import CollectionsOverview from "../../components/collections-overview/collections-overview.component";
+import CollectionsOverviewContiner from "../../components/collections-overview/collections-overview.container";
+// import CollectionPage from "../collection/collection.component";
+import CollectionPageContainer from "../collection/collection.container";
 
-import {
-	firestore,
-	convertCollectionsSnapshotToMap,
-} from "../../firebase/firebase.utils";
+// import {
+// 	firestore,
+// 	convertCollectionsSnapshotToMap,
+// } from "../../firebase/firebase.utils";
 
-import { updateCollections } from "../../redux/shop/shop.actions";
+// import { fetchCollectionsStartAsync } from "../../redux/shop/shop.actions";
+import { fetchCollectionsStart } from "../../redux/shop/shop.actions";
+import { selectIsCollectionFetching, selectIsCollectionsLoaded } from '../../redux/shop/shop.selectors'
 
-const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
-const CollectionPageWithSpinner = WithSpinner(CollectionPage);
+// const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
+// const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 
 class ShopPage extends React.Component {
-	constructor(props) {
-		super();
-		this.state = {
-			loading: true,
-		};
-	}
+	// constructor(props) {
+	// 	super();
+	// 	this.state = {
+	// 		loading: true,
+	// 	};
+	// }
 
-	unsubscribeFromSnapshot = null;
+	// unsubscribeFromSnapshot = null;
 
 	componentDidMount() {
-		const { updateCollections } = this.props;
+		// const { updateCollections } = this.props;
 
-		const collectionRef = firestore.collection("collections");
+		// const collectionRef = firestore.collection("collections");
 
 		// observable/observer pattern of interfacing with firestore library which constantly update us with live data
 		// this.unsubscribeFromSnapshot = collectionRef.onSnapshot(async (snapshot) => {
@@ -40,45 +45,58 @@ class ShopPage extends React.Component {
 		// });
 
 		// Promise base pattern by leveraging the firestore collectionRef that we get back from firestore library
-		collectionRef.get().then(snapshot => {
-			const collectionMap = convertCollectionsSnapshotToMap(snapshot);
-			updateCollections(collectionMap);
-			this.setState({ loading: false });
-		});
+		// collectionRef.get().then(snapshot => {
+		// 	const collectionMap = convertCollectionsSnapshotToMap(snapshot);
+		// 	updateCollections(collectionMap);
+		// 	this.setState({ loading: false });
+		// });
 
 		// Using the fetch pattern which is very deeply nested before we can access our desired data
 		// fetch('https://firestore.googleapis.com/v1/projects/five-clothing-db/databases/(default)/documents/collections')
 		// .then(response => response.json())
 		// .then(collections => console.log('collections:', collections))
 
+
+		// const {fetchCollectionsStartAsync} = this.props
+		const {fetchCollectionsStart} = this.props
+		fetchCollectionsStart()
+		// fetchCollectionsStartAsync()
+
 	}
 
 	render() {
-		const { match } = this.props;
-		const {loading} = this.state
+		const { match, isCollectionFetching, isCollectionLoaded } = this.props;
+		// const {loading} = this.state
 		return (
 			<div className="shop-page">
 				<Route
 					exact
 					path={`${match.path}`}
-					render={(props) => (
-						<CollectionsOverviewWithSpinner isLoading={loading} {...props} />
-					)}
+					component={CollectionsOverviewContiner}
 				/>
 				<Route
 					path={`${match.path}/:collectionId`}
-					render={(props) => (
-						<CollectionPageWithSpinner isLoading={loading} {...props} />
-					)}
+					component={CollectionPageContainer}
 				/>
 			</div>
 		);
 	}
 }
 
+// const mapStateToProps = createStructuredSelector({
+// 	isCollectionFetching: selectIsCollectionFetching,
+// 	isCollectionLoaded: selectIsCollectionsLoaded,
+// });
+
 const mapDispatchToProps = (dispatch) => ({
-	updateCollections: (collectionMap) =>
-		dispatch(updateCollections(collectionMap)),
+	fetchCollectionsStart: () =>
+		dispatch(fetchCollectionsStart()),
+	// fetchCollectionsStartAsync: () =>
+	// 	dispatch(fetchCollectionsStartAsync()),
 });
+// const mapDispatchToProps = (dispatch) => ({
+// 	updateCollections: (collectionMap) =>
+// 		dispatch(updateCollections(collectionMap)),
+// });
 
 export default connect(null, mapDispatchToProps)(ShopPage);

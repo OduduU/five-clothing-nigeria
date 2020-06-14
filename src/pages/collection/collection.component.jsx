@@ -14,7 +14,7 @@ const CollectionPage = ({ collection }) => {
 		<div className="collection-page">
 			<h2 className="title">{title}</h2>
 			<div className="items">
-				{items.map(item => (
+				{items.map((item) => (
 					<CollectionsItem key={item.id} item={item} />
 				))}
 			</div>
@@ -23,9 +23,8 @@ const CollectionPage = ({ collection }) => {
 };
 
 const mapStateToProps = (state, ownProps) => {
-	console.log("ownProp :", ownProps.match);
 	return {
-		collection: selectCollection(ownProps.match.params.collectionId)(state)
+		collection: selectCollection(ownProps.match.params.collectionId)(state),
 	};
 };
 
