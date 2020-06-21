@@ -46,7 +46,7 @@ const Checkout = ({ cartItems, total }) => {
 			<div className="test-warning">
 				*Please use the following test credit card for payments*
 				<br />
-				4242 4242 4242 4242 - Exp: 05/20 - cvv: 123
+				4242 4242 4242 4242 - Exp: 08/20 - cvv: 123
 			</div>
 
 			<div className='pay-now'>
