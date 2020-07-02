@@ -1,40 +1,53 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 
 import CustomButton from "../custom-button/custom-buttom.component";
 import CartItem from "../cart-item/cart-item.component";
+
+
 import { selectCartItems } from "../../redux/cart/cart.selectors";
 import { toggleCartHidden } from "../../redux/cart/cart.actions";
+import { selectCurrentUser } from "../../redux/user/user.selector";
 
-import "./cart-dropdown.styles.scss";
+import {
+	CartDropdownContainer,
+	CartDropdownButton,
+	EmptyMessageContainer,
+	CartItemsContainer,
+} from "./cart-dropdown.styles";
 
-const CartDropdown = ({ cartItems, dispatch }) => {
+const CartDropdown = ({ cartItems, dispatch, currentUser }) => {
 	const history = useHistory();
 	return (
-		<div className="cart-dropdown">
-			<div className="cart-items">
+		<CartDropdownContainer>
+			<CartItemsContainer>
 				{cartItems.length ? (
-					cartItems.map(cartItem => <CartItem key={cartItem.id} item={cartItem} />)
+					cartItems.map((cartItem) => <CartItem key={cartItem.id} item={cartItem} />)
 				) : (
-					<span className="empty-message">Your cart is empty</span>
+					<EmptyMessageContainer>Your cart is empty</EmptyMessageContainer>
 				)}
-			</div>
-			<CustomButton
+			</CartItemsContainer>
+			<CartDropdownButton
 				onClick={() => {
-					history.push("/checkout");
-					dispatch(toggleCartHidden());
+					if (currentUser) {
+						history.push("/checkout");
+						dispatch(toggleCartHidden());
+					} else {
+						history.push("/signin");
+					}
 				}}
 			>
 				GO TO CHECKOUT
-			</CustomButton>
-		</div>
+			</CartDropdownButton>
+		</CartDropdownContainer>
 	);
 };
 
 const mapStateToProps = createStructuredSelector({
-	cartItems: selectCartItems
+	currentUser: selectCurrentUser,
+	cartItems: selectCartItems,
 });
 
 export default connect(mapStateToProps)(CartDropdown);
