@@ -1,14 +1,17 @@
-import React from "react";
+import React, {lazy, Suspense} from "react";
 import { Route } from "react-router-dom";
 // import { createStructuredSelector } from 'reselect'
 import { connect } from "react-redux";
 
 // import WithSpinner from "../../components/with-spinner/with-spinner.component";
+import Spinner from "../../components/spinner/spinner.component";
 
 // import CollectionsOverview from "../../components/collections-overview/collections-overview.component";
-import CollectionsOverviewContiner from "../../components/collections-overview/collections-overview.container";
+// import CollectionsOverviewContiner from "../../components/collections-overview/collections-overview.container";
 // import CollectionPage from "../collection/collection.component";
-import CollectionPageContainer from "../collection/collection.container";
+// import CollectionPageContainer from "../collection/collection.container";
+
+
 
 // import {
 // 	firestore,
@@ -21,6 +24,13 @@ import { selectIsCollectionFetching, selectIsCollectionsLoaded } from '../../red
 
 // const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
 // const CollectionPageWithSpinner = WithSpinner(CollectionPage);
+
+const CollectionsOverviewContiner = lazy(() =>
+	import("../../components/collections-overview/collections-overview.container")
+);
+const CollectionPageContainer = lazy(() =>
+	import("../collection/collection.container")
+);
 
 class ShopPage extends React.Component {
 	// constructor(props) {
@@ -69,15 +79,17 @@ class ShopPage extends React.Component {
 		// const {loading} = this.state
 		return (
 			<div className="shop-page">
-				<Route
-					exact
-					path={`${match.path}`}
-					component={CollectionsOverviewContiner}
-				/>
-				<Route
-					path={`${match.path}/:collectionId`}
-					component={CollectionPageContainer}
-				/>
+				<Suspense fallback={<Spinner />}>
+					<Route
+						exact
+						path={`${match.path}`}
+						component={CollectionsOverviewContiner}
+					/>
+					<Route
+						path={`${match.path}/:collectionId`}
+						component={CollectionPageContainer}
+					/>
+				</Suspense>
 			</div>
 		);
 	}
